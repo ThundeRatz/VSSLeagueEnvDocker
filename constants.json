@@ -1,45 +1,49 @@
 {
-	"BallRadius": 0.0215,
-	"RobotLength": 0.075,
-	"QtPlayers": 3,
+    "Entity":{
+        "threadFrequency": 60
+    },
 
-	"Parameters":{
-		"BallMinimumVelocity": 0.1,
-		"PlacementWaitTime": 5.0,
-		"StopWaitTime": 5.0,
-		"GKTakeoutTime": 10.0,
-		"BallStuckTime": 10.0,
-		"PenaltyTime": 2.0,
-		"GameHalfTime": 300.0
-	},
+    "Vision":{
+    	"visionAddress": "224.0.0.1",
+    	"visionPort": 10002,
+    	"filters":{
+    		"useKalman": false,
+    		"noiseTime": 100,
+    		"lossTime": 100
+    	}
+    },
 
-	"VisionNetwork": {
-		"address": "224.0.0.1",
-		"port": 10002
-	},
+    "Replacer":{
+    	"replacerAddress": "224.5.23.2",
+    	"replacerPort": 10004,
+    	"firaAddress": "127.0.0.1",
+    	"firaPort": 20011
+    },
 
-	"RefereeNetwork": {
-		"address": "224.0.0.1",
-		"port": 10003
-	},
+    "Team":{
+    	"qtPlayers": 3,
+    	"blueTeamName": "ThundeRatz",
+    	"yellowTeamName": "Team Yellow",
+    	"blueIsLeftSide": true
+    },
 
-	"ReplacerNetwork": {
-		"address": "224.0.0.1",
-		"port": 10004
-	},
-
-	"FiraSimNetwork": {
-		"address": "127.0.0.1",
-		"port": 20011
-	},
-
-	"TeamLeft": {
-		"name": "ThundeRatz",
-		"color": "blue"
-	},
-
-	"TeamRight": {
-		"name": "VoceSabeQuem",
-		"color": "yellow"
-	}
+    "Referee":{
+    	"refereeAddress": "224.5.23.2",
+    	"refereePort": 10003,
+    	"transitionTime": 3.0,
+    	"game":{
+    		"gameType": "Group_Phase",
+    		"ballRadius": 0.0215,
+    		"robotLength": 0.075,
+    		"halfTime": 300.0,
+    		"overtimeHalfTime": 180.0
+    	},
+    	"fouls":{
+    		"useRefereeSuggestions": true,
+    		"maintainSpeedAtSuggestions": true,
+    		"ballMinSpeedForStuck": 0.1,
+    		"stuckedBallTime": 10.0,
+    		"ballInAreaMaxTime": 3.0
+    	}
+    }
 }

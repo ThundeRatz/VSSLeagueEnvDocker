@@ -35,9 +35,9 @@ RUN cd /firasim_ws && \
 
 # Install VSSReferee
 RUN cd /firasim_ws && \
-    git clone https://github.com/IEEEVSS/VSSReferee.git
+    git clone https://github.com/VSSSLeague/VSSReferee.git
 
-COPY constants.json /firasim_ws/VSSReferee/constants/
+COPY constants.json /firasim_ws/VSSReferee/src/constants/
 
 RUN cd /firasim_ws/VSSReferee && \
     mkdir build && cd build && qmake .. && make
@@ -50,4 +50,4 @@ RUN mkdir -m 700 /tmp/runtime-root
 ENV XDG_RUNTIME_DIR=/tmp/runtime-root
 
 # Run FIRASim and VSSReferee
-CMD /firasim_ws/VSSReferee/bin/VSS-Referee & /firasim_ws/FIRASim/bin/FIRASim
+CMD /firasim_ws/VSSReferee/bin/VSSReferee & /firasim_ws/FIRASim/bin/FIRASim
