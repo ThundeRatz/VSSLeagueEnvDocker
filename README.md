@@ -30,3 +30,7 @@ And execute it with:
 ```bash
 ./rundocker.sh
 ```
+
+## Changing constants
+
+In order to change the settings of the IPs and ports, among others, edit the `constants.json` file before building.
