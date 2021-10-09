@@ -1,8 +1,8 @@
-FROM ubuntu:18.04
+FROM ubuntu:18.04 as cacher
 
 # Set working directory
-RUN mkdir /firasim_ws
-WORKDIR /firasim_ws
+RUN mkdir /vsss_ws
+WORKDIR /vsss_ws
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
@@ -18,29 +18,36 @@ RUN apt-get update && apt-get install -y \
     protobuf-compiler \
     libode-dev \
     libboost-dev \
-    sudo \
-    && apt-get clean
-
-RUN cd /tmp && \
+    sudo && \
+    apt-get clean && \
+    cd /tmp && \
     git clone https://github.com/jpfeltracco/vartypes.git &&\
     cd vartypes && \
     mkdir build && cd build && \
     cmake .. && make && sudo make install
 
-# Install FIRASim
-RUN cd /firasim_ws && \
-    git clone https://github.com/IEEEVSS/FIRASim.git && \
+FROM cacher as builder
+
+# Install FIRASim and VSSReferee
+RUN cd /vsss_ws && \
+    git clone https://github.com/VSSSLeague/FIRASim.git && \
     cd FIRASim && \
-    mkdir build && cd build && cmake .. && make
+    git checkout tags/v3.0 && \
+    mkdir build && \
+    cd build && \
+    cmake .. && \
+    make && \
+    cd /vsss_ws && \
+    git clone https://github.com/VSSSLeague/VSSReferee.git && \
+    cd VSSReferee && \
+    git checkout tags/v3
 
-# Install VSSReferee
-RUN cd /firasim_ws && \
-    git clone https://github.com/VSSSLeague/VSSReferee.git
+COPY constants.json /vsss_ws/VSSReferee/src/constants/
 
-COPY constants.json /firasim_ws/VSSReferee/src/constants/
-
-RUN cd /firasim_ws/VSSReferee && \
+RUN cd /vsss_ws/VSSReferee && \
     mkdir build && cd build && qmake .. && make
+
+FROM builder as runner
 
 # Set enviroment variables
 ENV DISPLAY=:0
@@ -50,4 +57,4 @@ RUN mkdir -m 700 /tmp/runtime-root
 ENV XDG_RUNTIME_DIR=/tmp/runtime-root
 
 # Run FIRASim and VSSReferee
-CMD /firasim_ws/VSSReferee/bin/VSSReferee & /firasim_ws/FIRASim/bin/FIRASim
+CMD /vsss_ws/VSSReferee/bin/VSSReferee --3v3 & /vsss_ws/FIRASim/bin/FIRASim
