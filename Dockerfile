@@ -42,8 +42,6 @@ RUN cd /vsss_ws && \
     cd VSSReferee && \
     git checkout tags/v3
 
-COPY constants.json /vsss_ws/VSSReferee/src/constants/
-
 RUN cd /vsss_ws/VSSReferee && \
     mkdir build && cd build && qmake .. && make
 
@@ -55,6 +53,8 @@ ENV QT_X11_NO_MITSHM=1
 
 RUN mkdir -m 700 /tmp/runtime-root
 ENV XDG_RUNTIME_DIR=/tmp/runtime-root
+
+COPY constants.json /vsss_ws/VSSReferee/src/constants/
 
 # Run FIRASim and VSSReferee
 CMD /vsss_ws/VSSReferee/bin/VSSReferee --3v3 & /vsss_ws/FIRASim/bin/FIRASim
