@@ -40,7 +40,7 @@ RUN cd /vsss_ws && \
     cd /vsss_ws && \
     git clone https://github.com/VSSSLeague/VSSReferee.git && \
     cd VSSReferee && \
-    git checkout tags/v3
+    git checkout CBFRS
 
 RUN cd /vsss_ws/VSSReferee && \
     mkdir build && cd build && qmake .. && make
@@ -57,4 +57,4 @@ ENV XDG_RUNTIME_DIR=/tmp/runtime-root
 COPY constants.json /vsss_ws/VSSReferee/src/constants/
 
 # Run FIRASim and VSSReferee
-CMD /vsss_ws/VSSReferee/bin/VSSReferee --3v3 & /vsss_ws/FIRASim/bin/FIRASim
+CMD /vsss_ws/VSSReferee/bin/VSSReferee --3v3 --record false & /vsss_ws/FIRASim/bin/FIRASim
