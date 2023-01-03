@@ -48,7 +48,6 @@ RUN cd /vsss_ws/VSSReferee && \
 FROM builder as runner
 
 # Set enviroment variables
-ENV DISPLAY=:0
 ENV QT_X11_NO_MITSHM=1
 
 RUN mkdir -m 700 /tmp/runtime-root
