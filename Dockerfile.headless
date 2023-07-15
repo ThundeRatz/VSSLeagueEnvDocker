@@ -30,9 +30,9 @@ FROM cacher as builder
 
 # Install FIRASim and VSSReferee
 RUN cd /vsss_ws && \
-    git clone https://github.com/thiagohenrique1/FIRASim.git && \
+    git clone https://github.com/VSSSLeague/FIRASim.git && \
     cd FIRASim && \
-    git checkout docker_headless_fix && \
+    git checkout tags/v3.0 && \
     mkdir build && \
     cd build && \
     cmake .. && \
@@ -59,4 +59,4 @@ ENV XDG_RUNTIME_DIR=/tmp/runtime-root
 COPY constants_headless.json /vsss_ws/VSSReferee/src/constants/constants.json
 
 # Run FIRASim and VSSReferee
-CMD /vsss_ws/FIRASim/bin/FIRASim --headless & /vsss_ws/VSSReferee/bin/VSSReferee --3v3 --record false
+CMD /vsss_ws/FIRASim/bin/FIRASim --headless & /vsss_ws/VSSReferee/bin/VSSReferee --3v3 --record false --headless
