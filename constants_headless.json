@@ -1,0 +1,59 @@
+{
+    "Entity":{
+        "threadFrequency": 60
+    },
+
+    "Vision":{
+    	"visionAddress": "224.0.0.1",
+    	"visionPort": 10002,
+    	"filters":{
+    		"useKalman": false,
+    		"noiseTime": 100,
+    		"lossTime": 100
+    	}
+    },
+
+    "Network":{
+    	"networkInterface": "lo"
+    },
+
+    "Replacer":{
+    	"replacerAddress": "224.5.23.2",
+    	"replacerPort": 10004,
+    	"firaAddress": "127.0.0.1",
+    	"firaPort": 20011
+    },
+
+    "Team":{
+    	"qtPlayers": 5,
+    	"blueTeamName": "ThunderVolt",
+    	"yellowTeamName": "Team Yellow",
+    	"blueIsLeftSide": true
+    },
+
+    "Referee":{
+    	"refereeAddress": "224.5.23.2",
+    	"refereePort": 10003,
+    	"transitionTime": 0.04,
+		"headless": true,
+    	"game":{
+    		"gameType": "Group_Phase",
+    		"ballRadius": 0.0215,
+    		"robotLength": 0.075,
+    		"halfTime": 300.0,
+    		"overtimeHalfTime": 180.0
+    	},
+    	"fouls":{
+    		"useRefereeSuggestions": true,
+    		"maintainSpeedAtSuggestions": true,
+    		"ballMinSpeedForStuck": 0.1,
+    		"stuckedBallTime": 5.0,
+    		"ballInAreaMaxTime": 3.0
+    	}
+    },
+
+    "Webhook":{
+    	"hID": "",
+    	"hToken": ""
+    }
+}

@@ -30,20 +30,23 @@ FROM cacher as builder
 
 # Install FIRASim and VSSReferee
 RUN cd /vsss_ws && \
-    git clone https://github.com/VSSSLeague/FIRASim.git && \
+    git clone https://github.com/thiagohenrique1/FIRASim.git && \
     cd FIRASim && \
-    git checkout tags/v3.0 && \
+    git checkout docker_headless_fix && \
     mkdir build && \
     cd build && \
     cmake .. && \
-    make && \
-    cd /vsss_ws && \
-    git clone https://github.com/VSSSLeague/VSSReferee.git && \
-    cd VSSReferee && \
-    git checkout CBFRS
+    make
 
-RUN cd /vsss_ws/VSSReferee && \
-    mkdir build && cd build && qmake .. && make
+RUN cd /vsss_ws && \
+    git clone https://github.com/ThundeRatz/VSSReferee.git && \
+    cd VSSReferee && \
+    git checkout feature/auto_tests && \
+    cd /vsss_ws/VSSReferee && \
+    mkdir build && \
+    cd build && \
+    qmake .. && \
+    make
 
 FROM builder as runner
 
@@ -53,7 +56,7 @@ ENV QT_X11_NO_MITSHM=1
 RUN mkdir -m 700 /tmp/runtime-root
 ENV XDG_RUNTIME_DIR=/tmp/runtime-root
 
-COPY constants.json /vsss_ws/VSSReferee/src/constants/
+COPY constants_headless.json /vsss_ws/VSSReferee/src/constants/constants.json
 
 # Run FIRASim and VSSReferee
-CMD /vsss_ws/VSSReferee/bin/VSSReferee --3v3 --record false & /vsss_ws/FIRASim/bin/FIRASim
+CMD /vsss_ws/FIRASim/bin/FIRASim --headless & /vsss_ws/VSSReferee/bin/VSSReferee --3v3 --record false

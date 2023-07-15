@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-TAG="latest"
+TAG="stable"
 
 DOCKER_IMAGE="thunderatz/vss-league-env:$TAG"
 
