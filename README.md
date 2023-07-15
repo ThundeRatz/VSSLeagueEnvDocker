@@ -11,10 +11,10 @@ Once with the docker and the repository, you'll have the files `Dockerfile`, `do
 ### Dockerfile
 This file creates a environment image with Ubutu 18.04 with FIRASim and VSSReferee.
 
-### dockerbuild.sh
+### docker_build.sh
 This shell script is responsible for building the docker.
 
-### rundocker.sh
+### docker_run.sh
 This shell script is responsible for doing the entire execution. It is where the user, the environment, host, workdir, and other things are defined.
 
 ## Usage
@@ -22,13 +22,13 @@ This shell script is responsible for doing the entire execution. It is where the
 Build the docker with:
 
 ```bash
-./dockerbuild.sh
+./docker_build.sh
 ```
 
 And execute it with:
 
 ```bash
-./rundocker.sh
+./docker_run.sh
 ```
 
 ## Changing constants
