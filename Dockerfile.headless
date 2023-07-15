@@ -38,10 +38,15 @@ RUN cd /vsss_ws && \
     cmake .. && \
     make
 
+ENV REFEREE_REPO=ThundeRatz/VSSReferee
+ENV REFEREE_BRANCH=feature/auto_tests
+
+ADD https://api.github.com/repos/${REFEREE_REPO}/git/refs/heads/${REFEREE_BRANCH} /.git-hashref-referee
+
 RUN cd /vsss_ws && \
-    git clone https://github.com/ThundeRatz/VSSReferee.git && \
+    git clone https://github.com/${REFEREE_REPO}.git && \
     cd VSSReferee && \
-    git checkout feature/auto_tests && \
+    git checkout ${REFEREE_BRANCH} && \
     cd /vsss_ws/VSSReferee && \
     mkdir build && \
     cd build && \
@@ -59,4 +64,4 @@ ENV XDG_RUNTIME_DIR=/tmp/runtime-root
 COPY constants_headless.json /vsss_ws/VSSReferee/src/constants/constants.json
 
 # Run FIRASim and VSSReferee
-CMD /vsss_ws/FIRASim/bin/FIRASim --headless & /vsss_ws/VSSReferee/bin/VSSReferee --3v3 --record false --headless
+CMD /vsss_ws/FIRASim/bin/FIRASim --headless & /vsss_ws/VSSReferee/bin/VSSReferee --3v3 --record false
