@@ -36,14 +36,17 @@ RUN cd /vsss_ws && \
     mkdir build && \
     cd build && \
     cmake .. && \
-    make && \
-    cd /vsss_ws && \
+    make
+
+RUN cd /vsss_ws && \
     git clone https://github.com/VSSSLeague/VSSReferee.git && \
     cd VSSReferee && \
-    git checkout CBFRS
-
-RUN cd /vsss_ws/VSSReferee && \
-    mkdir build && cd build && qmake .. && make
+    git checkout CBFRS && \
+    cd /vsss_ws/VSSReferee && \
+    mkdir build && \
+    cd build && \
+    qmake .. && \
+    make
 
 FROM builder as runner
 
