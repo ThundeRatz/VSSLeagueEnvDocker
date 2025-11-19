@@ -32,7 +32,7 @@ FROM cacher as builder
 RUN cd /vsss_ws && \
     git clone https://github.com/VSSSLeague/FIRASim.git && \
     cd FIRASim && \
-    git checkout tags/v3.0 && \
+    git checkout master && \
     mkdir build && \
     cd build && \
     cmake .. && \
@@ -41,7 +41,7 @@ RUN cd /vsss_ws && \
 ENV REFEREE_REPO=ThundeRatz/VSSReferee
 ENV REFEREE_BRANCH=feature/auto_tests
 
-ADD https://api.github.com/repos/${REFEREE_REPO}/git/refs/heads/${REFEREE_BRANCH} /.git-hashref-referee
+# ADD https://api.github.com/repos/${REFEREE_REPO}/git/refs/heads/${REFEREE_BRANCH} /.git-hashref-referee
 
 RUN cd /vsss_ws && \
     git clone https://github.com/${REFEREE_REPO}.git && \
@@ -64,4 +64,4 @@ ENV XDG_RUNTIME_DIR=/tmp/runtime-root
 COPY constants_headless.json /vsss_ws/VSSReferee/src/constants/constants.json
 
 # Run FIRASim and VSSReferee
-CMD /vsss_ws/FIRASim/bin/FIRASim --headless & /vsss_ws/VSSReferee/bin/VSSReferee --3v3 --record false
+CMD /vsss_ws/FIRASim/bin/FIRASim --3v3 --headless & /vsss_ws/VSSReferee/bin/VSSReferee --3v3 --record false

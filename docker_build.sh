@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-TAG="stable"
+TAG="headless"
+CATEGORY="3v3-"$TAG
 
 ## Buildando o docker
-docker buildx build . -f Dockerfile.$TAG -t thunderatz/vss-league-env:$TAG
+docker buildx build . -f Dockerfile.$CATEGORY -t thunderatz/vss-league-env:$TAG

@@ -1,15 +1,17 @@
 #!/usr/bin/env bash
 
-TAG="stable"
+TAG="headless"
 
 DOCKER_IMAGE="thunderatz/vss-league-env:$TAG"
+
+SLEEP="30"
 
 xhost +local:docker
 
 docker run -it \
            --rm \
-           --privileged \
-           --net=host \
-           --env="DISPLAY" \
-           --env="TERM" \
-           $DOCKER_IMAGE
+           --name vsss-gui \
+           --ipc=host \
+           -e DISPLAY=$DISPLAY \
+           -v /tmp/.X11-unix:/tmp/.X11-unix \
+           $DOCKER_IMAGE 

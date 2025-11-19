@@ -1,62 +1,116 @@
-FROM ubuntu:18.04 as cacher
+#cacher
+FROM ubuntu:22.04 AS cacher
 
-# Set working directory
-RUN mkdir /vsss_ws
+ENV DEBIAN_FRONTEND=noninteractive
+
 WORKDIR /vsss_ws
 
-# Install dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
     g++ \
-    cmake \
     git \
-    qt5-default \
+    cmake \
+    qtbase5-dev \
+    qt5-qmake \
     libqt5opengl5-dev \
     libgl1-mesa-dev \
     libglu1-mesa-dev \
     libprotobuf-dev \
     protobuf-compiler \
-    libode-dev \
     libboost-dev \
+    libode-dev \
+    python3 \
+    python3-pip \
+    libx11-dev \
+    libxext-dev \
+    libxrender-dev \
+    libegl1-mesa \
     sudo && \
-    apt-get clean && \
-    cd /tmp && \
-    git clone https://github.com/jpfeltracco/vartypes.git &&\
-    cd vartypes && \
-    mkdir build && cd build && \
-    cmake .. && make && sudo make install
+    apt-get clean
+    
+RUN cd /tmp && \
+    git clone https://github.com/jpfeltracco/vartypes.git && \
+    cd vartypes && mkdir build && cd build && \
+    cmake .. && make -j$(nproc) && sudo make install
 
-FROM cacher as builder
+#builder
+FROM cyberbotics/webots:R2025a-ubuntu22.04 AS builder
+WORKDIR /vsss_ws
 
-# Install FIRASim and VSSReferee
-RUN cd /vsss_ws && \
-    git clone https://github.com/VSSSLeague/FIRASim.git && \
-    cd FIRASim && \
-    git checkout master && \
-    mkdir build && \
-    cd build && \
-    cmake .. && \
-    make
+ENV TRAVESIM_REPO=futebol-mini/travesim
+ENV TRAVESIM_BRANCH=main
 
-RUN cd /vsss_ws && \
-    git clone https://github.com/VSSSLeague/VSSReferee.git && \
+RUN apt-get update && apt-get install -y \
+    git \
+    build-essential \
+    qtbase5-dev \
+    qt5-qmake \
+    cmake \
+    libboost-system-dev \
+    libboost-thread-dev \
+    libboost-dev \
+    protobuf-compiler \
+    libprotobuf-dev \
+    libode-dev \
+    libqt5opengl5-dev \
+    libgl1-mesa-dev \
+    libglu1-mesa-dev \
+    libx11-dev \
+    libxext-dev \
+    libxrender-dev \
+    && apt-get clean
+
+COPY --from=cacher /usr/local/ /usr/local/
+
+# Build TraveSim
+RUN git clone https://github.com/${TRAVESIM_REPO}.git travesim && \
+    cd travesim && \
+    git checkout ${TRAVESIM_BRANCH} || true && \
+    make -j$(nproc)
+
+# Build VSSReferee
+ENV REFEREE_REPO=futebol-mini/VSSReferee
+ENV REFEREE_BRANCH=LARC2022
+
+RUN git clone https://github.com/${REFEREE_REPO}.git VSSReferee && \
     cd VSSReferee && \
-    git checkout CBFRS && \
-    cd /vsss_ws/VSSReferee && \
-    mkdir build && \
-    cd build && \
+    git checkout ${REFEREE_BRANCH} || true && \
+    mkdir -p build && cd build && \
     qmake .. && \
-    make
+    make -j$(nproc)
 
-FROM builder as runner
+#runer
+FROM cyberbotics/webots:R2025a-ubuntu22.04 AS runner
 
-# Set enviroment variables
-ENV QT_X11_NO_MITSHM=1
+ENV DEBIAN_FRONTEND=noninteractive
 
-RUN mkdir -m 700 /tmp/runtime-root
-ENV XDG_RUNTIME_DIR=/tmp/runtime-root
 
-COPY constants.json /vsss_ws/VSSReferee/src/constants/
+RUN apt-get update && apt-get install -y \
+    libqt5core5a \
+    libqt5gui5 \
+    libqt5widgets5 \
+    libqt5network5 \
+    libqt5opengl5 \
+    libqt5xml5 \
+    qtbase5-dev \
+    libprotobuf-dev \
+    protobuf-compiler \
+    libboost-system-dev \
+    libboost-thread-dev \
+    mesa-utils \
+    libgl1-mesa-dri \
+    && apt-get clean
 
-# Run FIRASim and VSSReferee
-CMD /vsss_ws/VSSReferee/bin/VSSReferee --5v5 --record false & /vsss_ws/FIRASim/bin/FIRASim --5v5
+
+WORKDIR /vsss_ws
+
+# Copy 
+COPY --from=builder /vsss_ws/travesim /vsss_ws/travesim
+COPY --from=builder /vsss_ws/VSSReferee /vsss_ws/VSSReferee
+
+COPY constants_headless.json /vsss_ws/VSSReferee/src/constants/constants.json
+
+EXPOSE 20011 30011 30012 10300 10301 10302 5900 5555 1234
+
+# Run travesim and VSSReferee
+CMD webots /vsss_ws/travesim/worlds/Match5v5.wbt & sleep 30 && /vsss_ws/VSSReferee/bin/VSSReferee --5v5 --record false

@@ -41,7 +41,7 @@ RUN cd /vsss_ws && \
 ENV REFEREE_REPO=ThundeRatz/VSSReferee
 ENV REFEREE_BRANCH=feature/auto_tests
 
-ADD https://api.github.com/repos/${REFEREE_REPO}/git/refs/heads/${REFEREE_BRANCH} /.git-hashref-referee
+# ADD https://api.github.com/repos/${REFEREE_REPO}/git/refs/heads/${REFEREE_BRANCH} /.git-hashref-referee
 
 RUN cd /vsss_ws && \
     git clone https://github.com/${REFEREE_REPO}.git && \
