@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-TAG="headless"
+TAG="stable"
 CATEGORY="3v3-"$TAG
 
 ## Buildando o docker
