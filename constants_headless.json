@@ -19,7 +19,7 @@
 
     "Replacer":{
     	"replacerAddress": "224.5.23.2",
-    	"replacerPort": 20011,
+    	"replacerPort": 10004,
     	"firaAddress": "127.0.0.1",
     	"firaPort": 20011
     },
@@ -34,7 +34,7 @@
     "Referee":{
     	"refereeAddress": "224.5.23.2",
     	"refereePort": 10003,
-    	"transitionTime": 0.04,
+    	"transitionTime": 4.0,
 		
     	"game":{
     		"gameType": "Group_Phase",
