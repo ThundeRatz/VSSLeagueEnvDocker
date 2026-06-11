@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
 
 TAG="stable"
-
 DOCKER_IMAGE="thunderatz/vss-league-env:$TAG"
 
-xhost +local:docker
+DOCKER_ARGUMENTS=(
+  -it
+  --rm
+  --name vsss-gui
+  --ipc=host
+)
 
 docker run -it \
   --rm \
@@ -13,4 +17,3 @@ docker run -it \
   -e DISPLAY=$DISPLAY \
   -v /tmp/.X11-unix:/tmp/.X11-unix \
   $DOCKER_IMAGE
-
