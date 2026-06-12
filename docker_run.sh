@@ -12,7 +12,7 @@ DOCKER_ARGUMENTS=(
 
 # 1. Detectar placa de vídeo e configurar o ecossistema híbrido (Nvidia PRIME)
 if command -v nvidia-smi &>/dev/null && docker info 2>&1 | grep -q "Runtimes:.* nvidia"; then
-  echo "[GPU] Grafico nvidia dedicado e ativa no Docker!"
+  echo "[GPU] placa de video$(nvidia-smi -L | cut -d ':' -f 2 | cut -d '(' -f 1)dedicado e ativa no Docker!"
   DOCKER_ARGUMENTS+=(
     --gpus all
     -e NVIDIA_VISIBLE_DEVICES=all
