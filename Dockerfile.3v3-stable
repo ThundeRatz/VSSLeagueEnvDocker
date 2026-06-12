@@ -99,6 +99,7 @@ RUN apt-get update && apt-get install -y \
     libboost-thread-dev \
     mesa-utils \
     libgl1-mesa-dri \
+    libxcb-cursor0 \
     && apt-get clean
 
 
@@ -113,4 +114,4 @@ COPY constants_headless.json /vsss_ws/VSSReferee/src/constants/constants.json
 EXPOSE 20011 30011 30012 10300 10301 10302 5900 5555 1234
 
 # Run travesim and VSSReferee
-CMD webots /vsss_ws/travesim/worlds/Match3v3.wbt & sleep 30 && /vsss_ws/VSSReferee/bin/VSSReferee --3v3 --record false
+CMD ["/bin/sh", "-c", "webots /vsss_ws/travesim/worlds/Match3v3.wbt & sleep 30 && /vsss_ws/VSSReferee/bin/VSSReferee --3v3 --record false"]
