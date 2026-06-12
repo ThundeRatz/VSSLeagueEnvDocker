@@ -12,7 +12,7 @@ DOCKER_ARGUMENTS=(
 
 # 1. Detectar placa de vídeo e configurar o ecossistema híbrido (Nvidia PRIME)
 if command -v nvidia-smi &>/dev/null && docker info 2>&1 | grep -q "Runtimes:.* nvidia"; then
-  echo "[GPU] Nvidia RTX 4050 dedicada detectada e ativa no Docker!"
+  echo "[GPU] Grafico nvidia dedicado e ativa no Docker!"
   DOCKER_ARGUMENTS+=(
     --gpus all
     -e NVIDIA_VISIBLE_DEVICES=all
@@ -21,7 +21,7 @@ if command -v nvidia-smi &>/dev/null && docker info 2>&1 | grep -q "Runtimes:.* 
     -e __GLX_VENDOR_LIBRARY_NAME=nvidia
   )
 else
-  echo "[GPU] Usando gráficos integrados AMD Radeon (Nvidia não configurada no Docker)."
+  echo "[GPU] Usando gráficos integrados ou AMD Radeon (ou Nvidia não configurada no Docker)."
   if [ -d /dev/dri ]; then
     DOCKER_ARGUMENTS+=(--device /dev/dri:/dev/dri)
   fi
