@@ -13,6 +13,7 @@ DOCKER_ARGUMENTS=(
 # 1. Detectar placa de vídeo e configurar o ecossistema híbrido (Nvidia PRIME)
 if command -v nvidia-smi &>/dev/null && docker info 2>&1 | grep -q "Runtimes:.* nvidia"; then
   echo "[GPU] placa de video$(nvidia-smi -L | cut -d ':' -f 2 | cut -d '(' -f 1)dedicado e ativa no Docker!"
+
   DOCKER_ARGUMENTS+=(
     --gpus all
     -e NVIDIA_VISIBLE_DEVICES=all
@@ -52,15 +53,29 @@ else
   if [ -n "$DISPLAY" ]; then
     echo "[DISPLAY] Configurando display $DISPLAY via XWayland."
 
+    # [FIX] Autoriza conexões locais ao servidor X do host
+    if command -v xhost &>/dev/null; then
+      xhost +local: >/dev/null 2>&1
+    else
+      echo "[AVISO] Comando 'xhost' não encontrado. Instale 'x11-xserver-utils' ou 'xorg-xhost' se a interface falhar."
+    fi
+
     DOCKER_ARGUMENTS+=(
       -e DISPLAY="$DISPLAY"
-      -v /tmp/.X11-unix:/tmp/.X11-unix:ro
+      -v /tmp/.X11-unix:/tmp/.X11-unix:rw
+      -e QT_QPA_PLATFORM=xcb
     )
+
+    if [ -n "$XAUTHORITY" ]; then
+      DOCKER_ARGUMENTS+=(-v "$XAUTHORITY:/root/.Xauthority:rw" -e XAUTHORITY="/root/.Xauthority")
+    elif [ -f "$HOME/.Xauthority" ]; then
+      DOCKER_ARGUMENTS+=(-v "$HOME/.Xauthority:/root/.Xauthority:rw" -e XAUTHORITY="/root/.Xauthority")
+    fi
+
   else
-    echo "[ERRO] Nenhuma variável de display ($DISPLAY) encontrada. Você está em uma sessão gráfica?"
+    echo "[ERRO] Nenhuma variável de display (\$DISPLAY) encontrada. Você está em uma sessão gráfica?"
     exit 1
   fi
 fi
-
 echo "Iniciando container..."
 docker run "${DOCKER_ARGUMENTS[@]}" $DOCKER_IMAGE
