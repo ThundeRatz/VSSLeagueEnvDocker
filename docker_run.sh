@@ -78,4 +78,4 @@ else
   fi
 fi
 echo "Iniciando container..."
-docker run "${DOCKER_ARGUMENTS[@]}" $DOCKER_IMAGE
+docker run --network host -it "${DOCKER_ARGUMENTS[@]}" $DOCKER_IMAGE

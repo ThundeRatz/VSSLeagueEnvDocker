@@ -101,8 +101,23 @@ RUN apt-get update && apt-get install -y \
     libboost-thread-dev \
     mesa-utils \
     libgl1-mesa-dri \
+    unzip \
+    wget \
+    iproute2 \
     && apt-get clean
 
+# Pre-download Webots assets to avoid runtime downloads that can stall startup
+RUN mkdir -p /root/.cache/Cyberbotics/Webots && \
+    wget -q --show-progress \
+        "https://github.com/cyberbotics/webots/releases/download/R2025a/assets-R2025a.zip" \
+        -O /tmp/assets-R2025a.zip && \
+    unzip -q /tmp/assets-R2025a.zip -d /root/.cache/Cyberbotics/Webots/ && \
+    rm /tmp/assets-R2025a.zip
+
+# Pre-seed Webots config to skip the first-run theme selection dialog
+RUN mkdir -p /root/.config/Cyberbotics && \
+    printf '[General]\nstartupMode=Normal\ntheme=webots_classic.qss\n' \
+        > /root/.config/Cyberbotics/Webots-R2025a.conf
 
 WORKDIR /vsss_ws
 
@@ -111,9 +126,10 @@ COPY --from=builder /vsss_ws/travesim /vsss_ws/travesim
 COPY --from=builder /vsss_ws/VSSReferee /vsss_ws/VSSReferee
 
 COPY constants_headless.json /vsss_ws/VSSReferee/src/constants/constants.json
+COPY entrypoint.sh /vsss_ws/entrypoint.sh
+RUN chmod +x /vsss_ws/entrypoint.sh
 
 EXPOSE 20011 30011 30012 10300 10301 10302 5900 5555 1234
 
-# Run travesim and VSSReferee
-CMD xvfb-run -a webots --batch --stdout --stderr --minimize /vsss_ws/travesim/worlds/Match3v3.wbt & sleep 30 \
-    && /vsss_ws/VSSReferee/bin/VSSReferee --3v3 --record false
+# Run travesim and VSSReferee (entrypoint waits for Webots to be ready before launching VSSReferee)
+CMD ["/bin/bash", "/vsss_ws/entrypoint.sh", "3v3", "light"]
