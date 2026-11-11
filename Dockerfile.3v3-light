@@ -107,11 +107,11 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean
 
 # Pre-download Webots assets to avoid runtime downloads that can stall startup
-RUN mkdir -p /root/.cache/Cyberbotics/Webots && \
+RUN mkdir -p /root/.cache/Cyberbotics/Webots/assets && \
     wget -q --show-progress \
         "https://github.com/cyberbotics/webots/releases/download/R2025a/assets-R2025a.zip" \
         -O /tmp/assets-R2025a.zip && \
-    unzip -q /tmp/assets-R2025a.zip -d /root/.cache/Cyberbotics/Webots/ && \
+    unzip -q /tmp/assets-R2025a.zip -d /root/.cache/Cyberbotics/Webots/assets/ && \
     rm /tmp/assets-R2025a.zip
 
 # Pre-seed Webots config to skip the first-run theme selection dialog
